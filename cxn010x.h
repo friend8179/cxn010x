@@ -46,8 +46,8 @@ public:
   // 关机指令
   bool Shutdown(bool isReboot = false);
 
-  bool GetTrubleInfo();
-  bool ClearTrubleInfo();
+  bool GetTroubleInfo();
+  bool ClearTroubleInfo();
   void GetDefault();
 
   bool GetTemperature ();

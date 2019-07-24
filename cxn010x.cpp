@@ -139,7 +139,7 @@ void CXNProjector::OnBootNotify(uint8_t * data, int num) {
     default:
       break;
     }
-    this->GetTrubleInfo();
+    this->GetTroubleInfo();
   }
 }
 
@@ -184,14 +184,14 @@ bool CXNProjector::Shutdown(bool isReboot)
   }
 }
 
-bool CXNProjector::GetTrubleInfo()
+bool CXNProjector::GetTroubleInfo()
 {
   uint8_t cmd[] = {0xCA, 0x05, 0x01, 0x24, 0x10, 0x06, 0x00};
   return 0 == CXN_Send_Command(cmd, sizeof(cmd) / sizeof(cmd[0]));
 }
 
 
-bool CXNProjector::ClearTrubleInfo()
+bool CXNProjector::ClearTroubleInfo()
 {
   uint8_t cmd []= {0xCB, 0x05, 0x01, 0x24, 0x10, 0x10, 0x06, 0x00, 0x00};
   return 0 == CXN_Send_Command(cmd, sizeof(cmd) / sizeof(cmd[0]));
