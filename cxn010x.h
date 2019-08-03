@@ -25,7 +25,7 @@ enum CXNProjector_State{
 };
 
 // 光机供电引脚接MOS管
-#define CXNProjector_POWER_PIN  12
+#define CXNProjector_POWER_PIN  15
 
 #pragma pack(1)
 class CXNProjector {
@@ -38,6 +38,7 @@ public:
   //  关闭光机供电
   //提示 只有再光机准备好了可以关机的情况下才允许断开电源
   void PowerOff();
+  
 
   // 视频信号输入启停
   bool StartInput();
@@ -79,6 +80,7 @@ public:
   void OnNotify();
   //特定状态通知处理
   void OnBootNotify(uint8_t * data, int num);
+
 public:
   CXNProjector_State GetState() {return stat;};
 private:
