@@ -154,7 +154,7 @@ void handleRoot() {
       projector.StopInput();
     } else if (cmd == "save_config") {
         // 上下文(保存)
-        projector.SaveConfig();
+      projector.SaveConfig();
     }
     /*break;
       case "pan_left": // 左
