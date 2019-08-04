@@ -57,7 +57,7 @@ void PrintHex( Stream& stream, const valueT val )
  * @endcode
 */
 template <typename addrT = size_t, uint8_t bytesPerRow = 16>
-void HexDump( Stream& stream, void* buff, size_t len, addrT base = 0 )
+void HexDump(Stream& stream, void* buff, size_t len, addrT base = 0 )
 {
   uint8_t* p = reinterpret_cast<uint8_t*>(buff);
   const size_t rows = (len + bytesPerRow-1) / bytesPerRow;
