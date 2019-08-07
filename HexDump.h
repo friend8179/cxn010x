@@ -39,6 +39,7 @@ void PrintHex( Stream& stream, const valueT val )
   }
 }
 
+
 /**
  * Dump a block of data as hexadecimal and ASCII to the provided stream.
  * @tparam addrT        Address type. This type determines the amount of digits displayed for

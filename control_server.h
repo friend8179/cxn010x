@@ -7,29 +7,30 @@
 #pragma pack(1)
 class ControlServer {
 
-public:
-  ControlServer(CXNProjector* projector);
-  ~ControlServer(); 
+  public:
+    ControlServer(CXNProjector* projector);
+    ~ControlServer();
 
-  void setup();
-  void handleRequest();
-  
-  String getLastCommand();
-  bool getShouldRefreshScreen();
+    void setup();
+    void handleRequest();
 
-private:
-  ESP8266WebServer* server;
-  CXNProjector* projector;
+    String getLastCommand();
+    bool getShouldRefreshScreen();
 
-  //String lastCommand;
-  bool shouldRefreshScreen = false;
+  private:
+    ESP8266WebServer* server;
+    CXNProjector* projector;
 
+    //String lastCommand;
+    bool shouldRefreshScreen = false;
 
-  void handleRoot(); 
-  void handleAdjust(); 
-  
-  void setShouldRefreshScreen();
-  
+    bool handleFileRead(String);
+    void handleDefault();
+    void handleCommand();
+    void handleAdjust();
+    void handleNotify();
+
+    void setShouldRefreshScreen();
 };
 
-#pragma pop() 
+#pragma pop()

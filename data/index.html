@@ -1,0 +1,40 @@
+<html>
+<head>
+<style>
+iframe {
+  width: 600px;
+  height: 100px;
+  border: 1px solid #666;
+}
+
+</style>
+<script src="/main.js"></script>
+</head>
+<body>
+  <p>projector control</p>
+  <form target="cmd_response" action="/cmd" onsubmit="deferLoadNotify()">
+    cmd
+    <input name="cmd" type="text" />
+    val
+    <input name="val" type="text" />
+    <input name="button" value="submit" type="submit" />
+  </form>
+
+  <p>adjustment control</p>
+  <form target="cmd_response" action="/adjustcmd">
+    cmd
+    <input name="cmd" type="text" />
+    val
+    <input name="val" type="text" />
+    <input name="button" value="submit" type="submit" />
+  </form>
+
+  <p>cmd response:</p>
+  <iframe name="cmd_response">
+  </iframe>
+
+  <p>notify response:</p>
+  <iframe name="notify_response" id="notify_response" src="/notify">
+  </iframe>
+</body>
+</html>

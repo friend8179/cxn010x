@@ -2,6 +2,7 @@
 #include <time.h>
 #include <U8g2lib.h>
 #include <ESP8266WiFi.h>
+#include <Ticker.h> 
 
 #include "cxn010x.h"
 #include "HexDump.h"
@@ -20,30 +21,33 @@
 
 U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0);
   
-const char* ssid = "SCatGFW";
-const char* password = "31415926";
+#define SSID "SCatGFW"
+#define WIFI_KEY "31415926"
+
+Ticker blinker;
 
 CXNProjector projector;
 CXNProjector_State last_state;
 ControlServer server(&projector);
 
 bool shouldRefreshScreen = false;
+bool shouldRefreshHeathyStatus = false;
 
-void updateStatus() {
-  digitalWrite(LED_PIN, !digitalRead(LED_PIN)); 
-  
-  CXNProjector_State state = projector.GetState();
-  if (last_state != state) {
-    Serial.print("state_change:");
-    Serial.print(state);
-    Serial.print("\n");
-    last_state = state;
+void setShouldRefreshScreen() {
+  shouldRefreshScreen = true;
+}
+
+bool getShouldRefreshScreen() {
+  if (shouldRefreshScreen) {
+    shouldRefreshScreen = false;
+    return true;
   }
+  return false;
 }
 
 void setupWifi() {
-  Serial.printf("Connecting to %s ", ssid);
-  WiFi.begin(ssid, password);
+  Serial.printf("Connecting to %s ", SSID);
+  WiFi.begin(SSID, WIFI_KEY);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
@@ -65,7 +69,6 @@ void setup() {
   Serial.println("Hello~");
   
   Wire.begin();
-  delay(10);
   
   u8g2.begin();
   u8g2.firstPage();
@@ -79,6 +82,8 @@ void setup() {
 
   Serial.print("projector power off\n");
   projector.PowerOff();
+  blinker.attach(5, setShouldRefreshScreen);
+  blinker.attach(120, [] { shouldRefreshHeathyStatus = true; });
 }
 
 void handleButtonPress();
@@ -102,7 +107,13 @@ void loop() {
   server.handleRequest();
   
   if (server.getShouldRefreshScreen() || getShouldRefreshScreen()) {
+    Serial.println("refresh screen");
     refreshScreen();
+  }
+
+  if (shouldRefreshHeathyStatus && projector.GetState() != STATE_POWER_OFF) {
+    shouldRefreshHeathyStatus = false;
+    projector.GetTemperature(refreshTemperatureCallback);
   }
 }
 
@@ -120,9 +131,17 @@ void refreshScreen() {
     } else {
       u8g2.drawStr(110, 15, "OFF");
     }
+    if (projector.GetTemperatureValue() > 0) {
+      u8g2.drawStr(0, 15, (String("T: ") + projector.GetTemperatureValue() + "\176C").c_str());
+    }
     //u8g2.drawStr(0, 15, (String("LAST CMD: ") + server.getLastCommand()).c_str());
     
   } while (u8g2.nextPage());
+}
+
+void refreshTemperatureCallback(uint8_t temp) {
+   Serial.print("temp: ");
+   Serial.println(temp);
 }
 
 void handleButtonPress() {
@@ -133,19 +152,14 @@ void handleButtonPress() {
   } else {
     Serial.print("shutdown\n");
     projector.Shutdown(false);
+    blinker.once(5, [] {
+      if (projector.GetState() != STATE_POWER_OFF) {
+        Serial.print("Force poweroff");
+        projector.PowerOff();
+      }
+    });
+    
   }
-  delay(1000);
+  delay(100);
   setShouldRefreshScreen();
-}
-
-void setShouldRefreshScreen() {
-  shouldRefreshScreen = true;
-}
-
-bool getShouldRefreshScreen() {
-  if (shouldRefreshScreen) {
-    shouldRefreshScreen = false;
-    return true;
-  }
-  return false;
 }
